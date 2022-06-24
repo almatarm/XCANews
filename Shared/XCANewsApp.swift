@@ -9,9 +9,12 @@ import SwiftUI
 
 @main
 struct XCANewsApp: App {
+    @StateObject var articleBookmarkVM = ArticleBookmarkViewModel()
+    
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(articleBookmarkVM)
         }
     }
 }

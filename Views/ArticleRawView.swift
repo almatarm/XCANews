@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ArticleRawView: View {
+    @EnvironmentObject var articleBookmarkVM: ArticleBookmarkViewModel
+    
     let article: Article
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -60,7 +62,8 @@ struct ArticleRawView: View {
                     Spacer()
                 
                     Button {
-                    } label: {Image(systemName: "bookmark")}
+                        toggleBookmark(for: article)
+                    } label: {Image(systemName: articleBookmarkVM.isBookmarked(for: article) ? "bookmark.fill" : "bookmark")}
                             .buttonStyle(.bordered)
                     
                     Button {
@@ -71,6 +74,14 @@ struct ArticleRawView: View {
                 }
             }
             .padding([.horizontal, .bottom])
+        }
+    }
+    
+    private func toggleBookmark(for article: Article) {
+        if articleBookmarkVM.isBookmarked(for: article) {
+            articleBookmarkVM.removeBookmark(for: article)
+        } else {
+            articleBookmarkVM.addBookmark(for: article)
         }
     }
 }
@@ -84,6 +95,8 @@ extension View {
     }
 }
 struct ArticleRawView_Previews: PreviewProvider {
+    @StateObject static var articleBookmarkVM = ArticleBookmarkViewModel()
+    
     static var previews: some View {
         NavigationView {
             List {
@@ -92,6 +105,7 @@ struct ArticleRawView_Previews: PreviewProvider {
             }
             .listStyle(.plain)
         }
+        .environmentObject(articleBookmarkVM)
         .previewDevice("iPhone SE (3rd generation)")
     }
 }
