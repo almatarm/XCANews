@@ -9,7 +9,7 @@ import SwiftUI
 
 @main
 struct XCANewsApp: App {
-    @StateObject var articleBookmarkVM = ArticleBookmarkViewModel()
+    @StateObject var articleBookmarkVM = ArticleBookmarkViewModel.shared
     
     var body: some Scene {
         WindowGroup {
