@@ -13,9 +13,14 @@ class ArticleSearchViewModel: ObservableObject {
     @Published var searchQuery = ""
     @Published var history = [String]()
     
-    
+    private let historyDataStore = PlistDataStore<[String]>(filename: "histories")
     private let historyMaxLimit = 10
     private let newsAPI = NewsAPI.shared
+    
+    static let shared = ArticleSearchViewModel()
+    private init() {
+        load()
+    }
     
     func searchArticle() async {
         if Task.isCancelled { return }
@@ -45,6 +50,7 @@ class ArticleSearchViewModel: ObservableObject {
             history.removeLast()
         }
         history.insert(text, at: 0)
+        historiesUpdated()
     }
     
     func removeHistory(_ text: String) {
@@ -52,9 +58,24 @@ class ArticleSearchViewModel: ObservableObject {
             return
         }
         history.remove(at: index)
+        historiesUpdated()
     }
     
     func removeAllHistory() {
         history.removeAll()
+        historiesUpdated()
+    }
+    
+    private func load() {
+        async {
+            self.history = await historyDataStore.load() ?? []
+        }
+    }
+    
+    private func historiesUpdated() {
+        let history = self.history
+        async {
+            await historyDataStore.save(history)
+        }
     }
 }

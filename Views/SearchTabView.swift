@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SearchTabView: View {
-    @StateObject var searchVM = ArticleSearchViewModel()
+    @StateObject var searchVM = ArticleSearchViewModel.shared
     
     private var articles: [Article] {
         if  case .success(let articles) = searchVM.phase {

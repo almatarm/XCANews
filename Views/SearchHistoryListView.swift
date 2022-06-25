@@ -27,6 +27,13 @@ struct SearchHistoryListView: View {
                 Button(history) {
                     onSubmit(history)
                 }
+                .swipeActions {
+                    Button(role: .destructive) {
+                        searchVM.removeHistory(history)
+                    } label: {
+                        Label("Delete", systemImage: "trash")
+                    }
+                }
             }
         }
         .listStyle(.plain)
@@ -35,7 +42,7 @@ struct SearchHistoryListView: View {
 
 struct SearchHistoryListView_Previews: PreviewProvider {
     static var previews: some View {
-        SearchHistoryListView(searchVM: ArticleSearchViewModel()) { _ in
+        SearchHistoryListView(searchVM: ArticleSearchViewModel.shared) { _ in
         }
     }
 }
