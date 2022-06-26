@@ -25,12 +25,11 @@ struct BookmarkTapView: View {
     
     var body: some View {
         let articles = self.articles
-        NavigationView {
-            ArticleListView(articles: articles)
-                .overlay(overlayView(isEmpty: articles.isEmpty))
-                .navigationTitle("Saved Articles")
-        }
-        .searchable(text: $searchText)
+        
+        ArticleListView(articles: articles)
+            .overlay(overlayView(isEmpty: articles.isEmpty))
+            .navigationTitle("Saved Articles")
+            .searchable(text: $searchText)
     }
     
     @ViewBuilder

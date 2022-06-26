@@ -19,18 +19,16 @@ struct SearchTabView: View {
     }
     
     var body: some View {
-        NavigationView {
-            ArticleListView(articles: articles)
-                .overlay(overlayView)
-                .navigationTitle("Search")
-        }
-        .searchable(text: $searchVM.searchQuery) { sugguestoinsView }
-        .onChange(of: searchVM.searchQuery) { newValue in
-            if newValue.isEmpty {
-                searchVM.phase = .empty
+        ArticleListView(articles: articles)
+            .overlay(overlayView)
+            .navigationTitle("Search")
+            .searchable(text: $searchVM.searchQuery) { sugguestoinsView }
+            .onChange(of: searchVM.searchQuery) { newValue in
+                if newValue.isEmpty {
+                    searchVM.phase = .empty
+                }
             }
-        }
-        .onSubmit(of: .search, search)
+            .onSubmit(of: .search, search)
         
     }
     

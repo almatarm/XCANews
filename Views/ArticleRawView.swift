@@ -9,9 +9,28 @@ import SwiftUI
 
 struct ArticleRawView: View {
     @EnvironmentObject var articleBookmarkVM: ArticleBookmarkViewModel
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     
     let article: Article
     var body: some View {
+        switch horizontalSizeClass {
+        case .regular:
+            GeometryReader { contentView(proxy: $0)}
+        default:
+            contentView()
+        }
+    }
+    
+    private func toggleBookmark(for article: Article) {
+        if articleBookmarkVM.isBookmarked(for: article) {
+            articleBookmarkVM.removeBookmark(for: article)
+        } else {
+            articleBookmarkVM.addBookmark(for: article)
+        }
+    }
+    
+    @ViewBuilder
+    private func contentView(proxy: GeometryProxy? = nil) -> some View {
         VStack(alignment: .leading, spacing: 16) {
             AsyncImage(url: article.imageURL) {
                 phase in
@@ -41,8 +60,8 @@ struct ArticleRawView: View {
                 
                 }
             }
-            .frame(minHeight: 200, maxHeight: 300)
-            .background(Color.gray.opacity(0.3))
+            .asyncImageFrame(horizontalSizeClass: horizontalSizeClass ?? .compact)
+            .background(Color.gray.opacity(0.6))
             
             VStack(alignment: .leading, spacing: 0) {
                 Text(article.titleText)
@@ -53,6 +72,10 @@ struct ArticleRawView: View {
                     .font(.subheadline)
                     .lineLimit(2)
             
+                if horizontalSizeClass == .regular {
+                    Spacer()
+                }
+                
                 HStack {
                     Text(article.captionText)
                         .font(.caption)
@@ -76,14 +99,6 @@ struct ArticleRawView: View {
             .padding([.horizontal, .bottom])
         }
     }
-    
-    private func toggleBookmark(for article: Article) {
-        if articleBookmarkVM.isBookmarked(for: article) {
-            articleBookmarkVM.removeBookmark(for: article)
-        } else {
-            articleBookmarkVM.addBookmark(for: article)
-        }
-    }
 }
 extension View {
     func presentShareSheet(url: URL) {
@@ -94,6 +109,19 @@ extension View {
             .present(activityVC, animated: true)
     }
 }
+
+fileprivate extension View {
+    @ViewBuilder
+    func asyncImageFrame(horizontalSizeClass: UserInterfaceSizeClass) -> some View {
+        switch horizontalSizeClass {
+        case .compact:
+            frame(minHeight: 200, maxHeight: 300)
+        case .regular:
+            frame(height: 180)
+        }
+    }
+}
+
 struct ArticleRawView_Previews: PreviewProvider {
     @StateObject static var articleBookmarkVM = ArticleBookmarkViewModel.shared
     
